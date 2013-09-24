@@ -1801,7 +1801,8 @@ class Cursor:
                                 elif target_type == SQL_C_WCHAR:
                                     value_list.append(buf_cvt_func(from_buffer_u(alloc_buffer)))
                                 elif alloc_buffer.value == '':
-                                    # FIXME - fails with ValueError
+                                    # FIXME - fails with ValueError, but only when getting
+                                    # table name list
                                     value_list.append(None)
                                 else:
                                     #print col_name, target_type, alloc_buffer.value
