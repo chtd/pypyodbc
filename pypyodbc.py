@@ -1597,12 +1597,15 @@ class Cursor:
         self._free_stmt()
         self._last_param_types = None
         self.statement = None
-        if type(query_string) == unicode:
-            c_query_string = wchar_pointer(UCS_buf(query_string))
-            ret = ODBC_API.SQLExecDirectW(self.stmt_h, c_query_string, len(query_string))
-        else:
-            c_query_string = ctypes.c_char_p(query_string)
-            ret = ODBC_API.SQLExecDirect(self.stmt_h, c_query_string, len(query_string))
+        # if type(query_string) == unicode:
+        #     c_query_string = wchar_pointer(UCS_buf(query_string))
+        #     ret = ODBC_API.SQLExecDirectW(self.stmt_h, c_query_string, len(query_string))
+        # else:
+        #     c_query_string = ctypes.c_char_p(query_string)
+        #     ret = ODBC_API.SQLExecDirect(self.stmt_h, c_query_string, len(query_string))
+        query_string = str(query_string)
+        c_query_string = ctypes.c_char_p(query_string)
+        ret = ODBC_API.SQLExecDirect(self.stmt_h, c_query_string, len(query_string))
         check_success(self, ret)
         self._NumOfRows()
         self._UpdateDesc()
@@ -1965,28 +1968,35 @@ class Cursor:
     
     
     def columns(self, table=None, catalog=None, schema=None, column=None):
-        """Return a list with all columns"""        
+        """Return a list with all columns"""
         l_catalog = l_schema = l_table = l_column = 0
         
-        if unicode in [type(x) for x in (table, catalog, schema,column)]:
-            string_p = lambda x:wchar_pointer(UCS_buf(x))
-            API_f = ODBC_API.SQLColumnsW
-        else:
-            string_p = ctypes.c_char_p
-            API_f = ODBC_API.SQLColumns
+        # if unicode in [type(x) for x in (table, catalog, schema,column)]:
+        #     string_p = lambda x:wchar_pointer(UCS_buf(x))
+        #     API_f = ODBC_API.SQLColumnsW
+        # else:
+        #     string_p = ctypes.c_char_p
+        #     API_f = ODBC_API.SQLColumns
+            
+        string_p = ctypes.c_char_p
+        API_f = ODBC_API.SQLColumns
             
         
         
-        if catalog is not None: 
+        if catalog is not None:
+            catalog = str(catalog)
             l_catalog = len(catalog)
             catalog = string_p(catalog)
         if schema is not None:
+            schema = str(schema)
             l_schema = len(schema)
             schema = string_p(schema)
-        if table is not None: 
+        if table is not None:
+            table = str(table)
             l_table = len(table)
             table = string_p(table)
-        if column is not None: 
+        if column is not None:
+            column = str(column)
             l_column = len(column)
             column = string_p(column)
             
@@ -2009,32 +2019,38 @@ class Cursor:
     
     def primaryKeys(self, table=None, catalog=None, schema=None):
         l_catalog = l_schema = l_table = 0
+
+        # SQLPrimaryKeysW causes segfault, will use SQLPrimaryKeys
+        # without unicode
+        #
+        # if unicode in [type(x) for x in (table, catalog, schema)]:
+        #     string_p = lambda x:wchar_pointer(UCS_buf(x))
+        #     API_f = ODBC_API.SQLPrimaryKeysW
+        # else:
+        #     string_p = ctypes.c_char_p
+        #     API_f = ODBC_API.SQLPrimaryKeys
+        string_p = ctypes.c_char_p
+        API_f = ODBC_API.SQLPrimaryKeys
         
-        if unicode in [type(x) for x in (table, catalog, schema)]:
-            string_p = lambda x:wchar_pointer(UCS_buf(x))
-            API_f = ODBC_API.SQLPrimaryKeysW
-        else:
-            string_p = ctypes.c_char_p
-            API_f = ODBC_API.SQLPrimaryKeys
-            
-        
-        
-        if catalog is not None: 
+        if catalog is not None:
+            catalog = str(catalog)
             l_catalog = len(catalog)
             catalog = string_p(catalog)
             
-        if schema is not None: 
+        if schema is not None:
+            schema = str(shema)
             l_schema = len(schema)
             schema = string_p(schema)
             
-        if table is not None: 
+        if table is not None:
+            table = str(table)
             l_table = len(table)
             table = string_p(table)
             
         self._free_stmt()
         self._last_param_types = None
         self.statement = None
-            
+
         ret = API_f(self.stmt_h,
                     catalog, l_catalog,
                     schema, l_schema,
@@ -2050,29 +2066,37 @@ class Cursor:
     def foreignKeys(self, table=None, catalog=None, schema=None, foreignTable=None, foreignCatalog=None, foreignSchema=None):
         l_catalog = l_schema = l_table = l_foreignTable = l_foreignCatalog = l_foreignSchema = 0
         
-        if unicode in [type(x) for x in (table, catalog, schema,foreignTable,foreignCatalog,foreignSchema)]:
-            string_p = lambda x:wchar_pointer(UCS_buf(x))
-            API_f = ODBC_API.SQLForeignKeysW
-        else:
-            string_p = ctypes.c_char_p
-            API_f = ODBC_API.SQLForeignKeys
+        # if unicode in [type(x) for x in (table, catalog, schema,foreignTable,foreignCatalog,foreignSchema)]:
+        #     string_p = lambda x:wchar_pointer(UCS_buf(x))
+        #     API_f = ODBC_API.SQLForeignKeysW
+        # else:
+        #     string_p = ctypes.c_char_p
+        #     API_f = ODBC_API.SQLForeignKeys
+        string_p = ctypes.c_char_p
+        API_f = ODBC_API.SQLForeignKeys
         
         if catalog is not None: 
+            catalog = str(catalog)
             l_catalog = len(catalog)
             catalog = string_p(catalog)
         if schema is not None: 
+            schema = str(schema)
             l_schema = len(schema)
             schema = string_p(schema)
         if table is not None: 
+            table = str(table)
             l_table = len(table)
             table = string_p(table)
         if foreignTable is not None: 
+            foreignTable = str(table)
             l_foreignTable = len(foreignTable)
             foreignTable = string_p(foreignTable)
         if foreignCatalog is not None: 
+            foreignCatalog = str(catalog)
             l_foreignCatalog = len(foreignCatalog)
             foreignCatalog = string_p(foreignCatalog)
         if foreignSchema is not None: 
+            foreignSchema = str(schema)
             l_foreignSchema = len(foreignSchema)
             foreignSchema = string_p(foreignSchema)
         
