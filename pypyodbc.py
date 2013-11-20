@@ -2390,8 +2390,7 @@ class Connection:
         
         self.unicode_results = unicode_results
         self.connected = 1
-        if 'OdbcFb' not in self.getinfo(SQL_DRIVER_NAME):
-            self.update_db_special_info()
+        self.update_db_special_info()
         
     def clear_output_converters(self):
         self.output_converter = {}
@@ -2434,6 +2433,8 @@ class Connection:
         return cur
 
     def update_db_special_info(self):
+        if 'OdbcFb' in self.getinfo(SQL_DRIVER_NAME):
+            return
         for sql_type in (
             SQL_TYPE_TIMESTAMP,
             SQL_TYPE_DATE,
