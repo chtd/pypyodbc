@@ -565,13 +565,13 @@ def dttm_cvt(x):
     if py_v3:
         x = x.decode('ascii')
     if x == '': return None
-    return x.ljust(26,'0')
+    return x
 
 def tm_cvt(x):
     if py_v3:
         x = x.decode('ascii')
     if x == '': return None
-    return x.ljust(15,'0')
+    return x
 
 def dt_cvt(x):
     if py_v3:
