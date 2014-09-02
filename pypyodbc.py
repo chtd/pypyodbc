@@ -564,20 +564,17 @@ SQL_DESC_DISPLAY_SIZE = SQL_COLUMN_DISPLAY_SIZE
 def dttm_cvt(x):
     if py_v3:
         x = x.decode('ascii')
-    if x == '': return None
-    return x
+    return x if x != '' else None
 
 def tm_cvt(x):
     if py_v3:
         x = x.decode('ascii')
-    if x == '': return None
-    return x
+    return x if x != '' else None
 
 def dt_cvt(x):
     if py_v3:
         x = x.decode('ascii')
-    if x == '': return None
-    return x
+    return x if x != '' else None
 
 def Decimal_cvt(x):
     if py_v3:
